@@ -5,6 +5,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Web;
 using System.Web.UI.WebControls.WebParts;
+using Microsoft.AspNet.Identity.EntityFramework;
 
 namespace CineExplorer.Models
 {
@@ -28,7 +29,7 @@ namespace CineExplorer.Models
 
         [Required]
         [ForeignKey("User")]
-        public int UserID { get; set; }
-        public virtual User User { get; set; }
+        public string UserId { get; set; }
+        public virtual ApplicationUser User { get; set; }
     }
 }

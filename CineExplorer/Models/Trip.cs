@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNet.Identity.EntityFramework;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -20,7 +21,7 @@ namespace CineExplorer.Models
         public ICollection<Location> Location { get; set; }
 
         [ForeignKey("User")]
-        public int UserID { get; set; }
-        public virtual User User { get; set; }
+        public string UserId { get; set; }
+        public virtual ApplicationUser User { get; set; }
     }
 }
