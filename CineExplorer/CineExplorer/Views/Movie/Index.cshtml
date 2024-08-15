@@ -1,0 +1,28 @@
+﻿@model IEnumerable<CineExplorer.Models.Movie>
+@{
+    ViewBag.Title = "Movies";
+}
+
+<h2>Movies</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create", null, new { @class = "btn btn-primary" })
+</p>
+
+<div class="row">
+    @foreach (var movie in Model)
+    {
+        <div class="col-md-4 mb-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">@movie.Name</h5>
+                    <h6 class="card-subtitle mb-2 text-muted">@movie.ReleaseYear</h6>
+                    <p class="card-text">@movie.Description</p>
+                    @Html.ActionLink("Details", "Details", new { id = movie.MovieId }, new { @class = "btn btn-info" })
+                    @Html.ActionLink("Edit", "Edit", new { id = movie.MovieId }, new { @class = "btn btn-warning" })
+                    @Html.ActionLink("Delete", "Delete", new { id = movie.MovieId }, new { @class = "btn btn-danger" })
+                </div>
+            </div>
+        </div>
+    }
+</div>
