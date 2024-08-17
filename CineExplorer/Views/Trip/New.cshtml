@@ -1,52 +1,69 @@
-﻿@model IEnumerable<CineExplorer.Models.Location>
+﻿@model CineExplorer.Models.Trip
 
-@{
-    ViewBag.Title = "Create Trip";
+<h2>Create New Trip</h2>
+
+@using (Html.BeginForm("Create", "Trip", FormMethod.Post))
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.TripName)
+        @Html.EditorFor(model => model.TripName, new { htmlAttributes = new { @class = "form-control", required = "required" } })
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.TripDescription)
+        @Html.TextAreaFor(model => model.TripDescription, new { @class = "form-control", required = "required" })
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.StartDate)
+        @Html.EditorFor(model => model.StartDate, new { htmlAttributes = new { @class = "form-control", type = "date", required = "required" } })
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.EndDate)
+        @Html.EditorFor(model => model.EndDate, new { htmlAttributes = new { @class = "form-control", type = "date", required = "required" } })
+    </div>
+
+    if (ViewBag.MovieId != null)
+    {
+        <input type="hidden" name="movieId" value="@ViewBag.MovieId" />
+        <p>Select locations from the movie: @ViewBag.MovieName (at least one is required)</p>
+        <div class="form-group">
+            @foreach (var location in ViewBag.MovieLocations)
+            {
+                <div class="form-check">
+                    <input type="checkbox" name="selectedLocations" value="@location.LocationId" class="form-check-input location-checkbox" id="location-@location.LocationId" />
+                    <label class="form-check-label" for="location-@location.LocationId">@location.Name, @location.City, @location.Country</label>
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <div class="form-group">
+            <label>Select Locations (at least one is required)</label>
+            @foreach (var location in ViewBag.AllLocations)
+            {
+                <div class="form-check">
+                    <input type="checkbox" name="selectedLocations" value="@location.LocationId" class="form-check-input location-checkbox" id="location-@location.LocationId" />
+                    <label class="form-check-label" for="location-@location.LocationId">@location.Name, @location.City, @location.Country</label>
+                </div>
+            }
+        </div>
+    }
+
+    <button type="submit" class="btn btn-primary" id="submitButton">Create Trip</button>
 }
 
-<h2>Create Trip</h2>
-
-<h4>Trip</h4>
-
-<div class="row">
-    <div class="col-md-4">
-        <form action="/Trip/Create" method="POST">
-            <div class="form-group">
-                <label for="TripName" class="control-label">Name</label>
-                <input name="TripName" class="form-control" />
-            </div>
-            <div class="form-group">
-                <label for="TripDescription" class="control-label">Description</label>
-                <input name="TripDescription" class="form-control" />
-            </div>
-            <div class="form-group">
-                <label for="StartDate" class="control-label">Start Date</label>
-                <input name="StartDate" class="form-control" type="date" />
-            </div>
-            <div class="form-group">
-                <label for="EndDate" class="control-label">End Date</label>
-                <input name="EndDate" class="form-control" type="date" />
-            </div>
-            <div class="form-group">
-                <label for="CustomerId" class="control-label">Customer ID</label>
-                <input name="CustomerId" class="form-control" />
-            </div>
-            <div class="form-group">
-                <label for="Places" class="control-label">Select Places</label>
-                <select class="form-control" multiple="multiple" name="selectedLocations">
-                    @foreach (var item in Model)
-                    {
-                        <option name="PlaceId" value="@item.LocationId">@item.Name</option>
-                    }
-                </select>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
-            </div>
-        </form>
-    </div>
-</div>
-
-<div>
-    <a href="/Trip/List">Back to List</a>
-</div>
+@section Scripts {
+    <script>$(document).ready(function () {
+            $('#submitButton').click(function (e) {
+                if ($('.location-checkbox:checked').length === 0) {
+                    e.preventDefault();
+                    alert('Please select at least one location for your trip.');
+                }
+            });
+        });</script>
+}

@@ -35,7 +35,7 @@ namespace CineExplorer.Controllers
         // GET: Trips/Show/5
         public ActionResult Show(int id)
         {
-            string url = "TripData/FindTrip/"+ id;
+            string url = "TripData/FindTrip/" + id;
             HttpResponseMessage response = client.GetAsync(url).Result;
 
             Trip trip = response.Content.ReadAsAsync<Trip>().Result;
@@ -56,34 +56,73 @@ namespace CineExplorer.Controllers
         // POST: Trips/Create
         [HttpPost]
         [Authorize]
-        public ActionResult Create(Trip trip, int[] selectedLocations)
+        public ActionResult Create(Trip trip, int? movieId, List<int> selectedLocations)
         {
-
-            List<Location> location = new List<Location>();
-            foreach (var locationId in selectedLocations)
+            if (selectedLocations == null || !selectedLocations.Any())
             {
-                string url1 = "LocationData/FindLocation/" + locationId;
-                HttpResponseMessage response1 = client.GetAsync(url1).Result;
-                Location locationData = response1.Content.ReadAsAsync<Location>().Result;
-                location.Add(locationData);
+                ModelState.AddModelError("", "At least one location must be selected.");
+
+                // Repopulate locations for the view
+                if (movieId.HasValue)
+                {
+                    string movieUrl = $"MovieData/FindMovie/{movieId}";
+                    HttpResponseMessage movieResponse = client.GetAsync(movieUrl).Result;
+                    Movie movie = movieResponse.Content.ReadAsAsync<Movie>().Result;
+
+                    ViewBag.MovieName = movie.Name;
+                    ViewBag.MovieLocations = movie.Locations;
+                }
+                else
+                {
+                    string url = "LocationData/ListLocations";
+                    HttpResponseMessage locationsResponse = client.GetAsync(url).Result;
+                    ViewBag.AllLocations = locationsResponse.Content.ReadAsAsync<IEnumerable<Location>>().Result;
+                }
+
+                return View("New", trip);
             }
 
-            trip.Location = location;
             trip.UserId = User.Identity.GetUserId();
-            string url = "TripData/AddTrip";
-            
+            trip.Location = new List<Location>();
+
+            foreach (var locationId in selectedLocations)
+            {
+                string url = $"LocationData/FindLocation/{locationId}";
+                HttpResponseMessage locationresponse = client.GetAsync(url).Result;
+                Location locationData = locationresponse.Content.ReadAsAsync<Location>().Result;
+                trip.Location.Add(locationData);
+            }
+
+            string createUrl = "TripData/AddTrip";
             string jsonpayload = jss.Serialize(trip);
             HttpContent content = new StringContent(jsonpayload);
             content.Headers.ContentType.MediaType = "application/json";
 
-            HttpResponseMessage response = client.PostAsync(url, content).Result;
+            HttpResponseMessage response = client.PostAsync(createUrl, content).Result;
             if (response.IsSuccessStatusCode)
             {
-                return RedirectToAction("New");
+                return RedirectToAction("Index");
             }
             else
             {
-                return View(trip);
+                // Repopulate locations for the view in case of error
+                if (movieId.HasValue)
+                {
+                    string movieUrl = $"MovieData/FindMovie/{movieId}";
+                    HttpResponseMessage movieResponse = client.GetAsync(movieUrl).Result;
+                    Movie movie = movieResponse.Content.ReadAsAsync<Movie>().Result;
+
+                    ViewBag.MovieName = movie.Name;
+                    ViewBag.MovieLocations = movie.Locations;
+                }
+                else
+                {
+                    string url = "LocationData/ListLocations";
+                    HttpResponseMessage locationsResponse = client.GetAsync(url).Result;
+                    ViewBag.AllLocations = locationsResponse.Content.ReadAsAsync<IEnumerable<Location>>().Result;
+                }
+
+                return View("New", trip);
             }
         }
 
@@ -151,7 +190,7 @@ namespace CineExplorer.Controllers
             }
         }
 
-       
+
 
     }
 }

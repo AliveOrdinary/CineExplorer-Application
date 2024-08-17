@@ -48,9 +48,9 @@
                 @foreach (var location in Model.Location)
                 {
                     <li>@location.Name (@location.City)</li>
+                    <a href="/Review/Create/@location.LocationId" class="btn btn-sm btn-primary">Add Review</a>
                 }
             </ul>
-            <a href="/Trip/EditPlaceFromTrip/@Model.TripId" class="btn btn-sm btn-secondary">Add or Remove Location</a>
         </dd>
     </dl>
 </div>
