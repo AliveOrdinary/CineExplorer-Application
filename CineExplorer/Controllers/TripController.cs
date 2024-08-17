@@ -1,4 +1,5 @@
 ﻿using CineExplorer.Models;
+using Microsoft.AspNet.Identity;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -31,18 +32,19 @@ namespace CineExplorer.Controllers
             return View(trips);
         }
 
-        // GET: Trips/Details/5
-        public ActionResult Details(int id)
+        // GET: Trips/Show/5
+        public ActionResult Show(int id)
         {
-            string url = $"TripsData/FindTrip/{id}";
+            string url = "TripData/FindTrip/"+ id;
             HttpResponseMessage response = client.GetAsync(url).Result;
 
             Trip trip = response.Content.ReadAsAsync<Trip>().Result;
+
             return View(trip);
         }
 
         // GET: Trips/Create
-        
+        [Authorize]
         public ActionResult New()
         {
             string url = "LocationData/ListLocations";
@@ -53,7 +55,6 @@ namespace CineExplorer.Controllers
 
         // POST: Trips/Create
         [HttpPost]
-        [ValidateAntiForgeryToken]
         [Authorize]
         public ActionResult Create(Trip trip, int[] selectedLocations)
         {
@@ -67,7 +68,9 @@ namespace CineExplorer.Controllers
                 location.Add(locationData);
             }
 
-            string url = "TripsData/AddTrip";
+            trip.Location = location;
+            trip.UserId = User.Identity.GetUserId();
+            string url = "TripData/AddTrip";
             
             string jsonpayload = jss.Serialize(trip);
             HttpContent content = new StringContent(jsonpayload);
@@ -76,7 +79,7 @@ namespace CineExplorer.Controllers
             HttpResponseMessage response = client.PostAsync(url, content).Result;
             if (response.IsSuccessStatusCode)
             {
-                return RedirectToAction("Index");
+                return RedirectToAction("New");
             }
             else
             {
@@ -147,6 +150,8 @@ namespace CineExplorer.Controllers
                 return new HttpStatusCodeResult(System.Net.HttpStatusCode.InternalServerError);
             }
         }
-        
+
+       
+
     }
 }

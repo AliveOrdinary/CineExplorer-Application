@@ -24,7 +24,7 @@ namespace CineExplorer.Controllers
         /// CONTENT: all trips in the database, including their associated user and locations.
         /// </returns>
         [HttpGet]
-        [Route("api/TripsData/ListTrips")]
+        [Route("api/TripData/ListTrips")]
         public IHttpActionResult ListTrips()
         {
             List<Trip> trips = db.Trip.Include(t => t.User).Include(t => t.Location).ToList();
@@ -43,7 +43,7 @@ namespace CineExplorer.Controllers
         /// </returns>
         [ResponseType(typeof(Trip))]
         [HttpGet]
-        [Route("api/TripsData/FindTrip/{id}")]
+        [Route("api/TripData/FindTrip/{id}")]
         public IHttpActionResult FindTrip(int id)
         {
             Trip trip = db.Trip.Include(t => t.User).Include(t => t.Location).FirstOrDefault(t => t.TripId == id);
@@ -66,7 +66,6 @@ namespace CineExplorer.Controllers
         /// </returns>
         [ResponseType(typeof(Trip))]
         [HttpPost]
-        [Authorize]
         public IHttpActionResult AddTrip(Trip trip)
         {
             if (!ModelState.IsValid)
@@ -74,11 +73,10 @@ namespace CineExplorer.Controllers
                 return BadRequest(ModelState);
             }
 
-            trip.UserId = User.Identity.GetUserId();
             db.Trip.Add(trip);
             db.SaveChanges();
 
-            return CreatedAtRoute("DefaultApi", new { id = trip.TripId }, trip);
+            return Ok();
         }
 
         /// <summary>
@@ -91,7 +89,7 @@ namespace CineExplorer.Controllers
         /// HEADER: 404 (NOT FOUND)
         /// </returns>
         [ResponseType(typeof(Trip))]
-        [Route("api/TripsData/DeleteTrip/{id}")]
+        [Route("api/TripData/DeleteTrip/{id}")]
         [HttpPost]
         [Authorize]
         public IHttpActionResult DeleteTrip(int id)
@@ -126,7 +124,7 @@ namespace CineExplorer.Controllers
         /// HEADER: 404 (Not Found)
         /// </returns>
         [ResponseType(typeof(void))]
-        [Route("api/TripsData/UpdateTrip/{id}")]
+        [Route("api/TripData/UpdateTrip/{id}")]
         [HttpPost]
         [Authorize]
         public IHttpActionResult UpdateTrip(int id, Trip trip)
@@ -179,7 +177,7 @@ namespace CineExplorer.Controllers
         /// </returns>
         [HttpPost]
         [Authorize]
-        [Route("api/TripsData/AddLocationToTrip/{tripId}/{locationId}")]
+        [Route("api/TripData/AddLocationToTrip/{tripId}/{locationId}")]
         public IHttpActionResult AddLocationToTrip(int tripId, int locationId)
         {
             Trip trip = db.Trip.Include(t => t.Location).FirstOrDefault(t => t.TripId == tripId);
@@ -220,7 +218,7 @@ namespace CineExplorer.Controllers
         /// </returns>
         [HttpPost]
         [Authorize]
-        [Route("api/TripsData/RemoveLocationFromTrip/{tripId}/{locationId}")]
+        [Route("api/TripData/RemoveLocationFromTrip/{tripId}/{locationId}")]
         public IHttpActionResult RemoveLocationFromTrip(int tripId, int locationId)
         {
             Trip trip = db.Trip.Include(t => t.Location).FirstOrDefault(t => t.TripId == tripId);
@@ -249,26 +247,14 @@ namespace CineExplorer.Controllers
             return Ok();
         }
 
-        /// <summary>
-        /// Returns all trips for a particular user
-        /// </summary>
-        /// <param name="userId">The user ID</param>
-        /// <returns>
-        /// HEADER: 200 (OK)
-        /// CONTENT: All trips in the database for the particular user
-        /// </returns>
-        [ResponseType(typeof(IEnumerable<Trip>))]
         [HttpGet]
-        [Route("api/TripsData/TripsForUser/{userId}")]
-        public IHttpActionResult TripsForUser(string userId)
+        [Route("api/TripData/ListTripsForUser")]
+        [Authorize]
+        public IEnumerable<Trip> ListTripsForUser()
         {
-            List<Trip> trips = db.Trip
-                 .Include(t => t.User)
-                 .Include(t => t.Location)
-                 .Where(t => t.UserId == userId)
-                 .ToList();
-
-            return Ok(trips);
+            string userId = User.Identity.GetUserId();
+            List<Trip> trips = db.Trip.Where(t => t.UserId == userId).ToList();
+            return trips;
         }
 
         private bool TripExists(int id)

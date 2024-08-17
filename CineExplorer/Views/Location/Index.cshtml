@@ -1,0 +1,43 @@
+﻿@model IEnumerable<CineExplorer.Models.Location>
+
+@{
+    ViewBag.Title = "Locations";
+}
+
+<h2 class="mb-4">Locations</h2>
+
+@if (User.Identity.Name == "admin@testmail.com")
+{
+    <p>
+        @Html.ActionLink("Create New", "Create", null, new { @class = "btn btn-primary" })
+    </p>
+}
+
+<table class="table table-striped table-hover">
+    <thead class="thead-dark">
+        <tr>
+            <th>@Html.DisplayNameFor(model => model.First().Name)</th>
+            <th>@Html.DisplayNameFor(model => model.First().City)</th>
+            <th>@Html.DisplayNameFor(model => model.First().Country)</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@Html.DisplayFor(modelItem => item.Name)</td>
+                <td>@Html.DisplayFor(modelItem => item.City)</td>
+                <td>@Html.DisplayFor(modelItem => item.Country)</td>
+                <td>
+                    @Html.ActionLink("Details", "Details", new { id = item.LocationId }, new { @class = "btn btn-info btn-sm" })
+                    @if (User.Identity.Name == "admin@testmail.com")
+                    {
+                        @Html.ActionLink("Edit", "Edit", new { id = item.LocationId }, new { @class = "btn btn-warning btn-sm" })
+                        @Html.ActionLink("Delete", "Delete", new { id = item.LocationId }, new { @class = "btn btn-danger btn-sm" })
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

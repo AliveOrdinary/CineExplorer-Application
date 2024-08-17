@@ -1,0 +1,57 @@
+﻿@model CineExplorer.Models.Location
+
+@{
+    ViewBag.Title = "Create Location";
+}
+
+<h2>Create Location</h2>
+
+<div class="container">
+    <h4>Location Details</h4>
+    <hr />
+
+    @using (Html.BeginForm("Create", "Location", FormMethod.Post, new { enctype = "multipart/form-data" }))
+    {
+        @Html.AntiForgeryToken()
+
+        <div class="row">
+            <div class="col-md-8">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.Name, htmlAttributes: new { @class = "control-label" })
+                    @Html.EditorFor(model => model.Name, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(model => model.City, htmlAttributes: new { @class = "control-label" })
+                    @Html.EditorFor(model => model.City, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.City, "", new { @class = "text-danger" })
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(model => model.Country, htmlAttributes: new { @class = "control-label" })
+                    @Html.EditorFor(model => model.Country, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.Country, "", new { @class = "text-danger" })
+                </div>
+                <div class="form-group">
+                    @Html.Label("Image", htmlAttributes: new { @class = "control-label" })
+                    <input type="file" name="ImageFile" class="form-control" />
+                </div>
+                <div class="form-group">
+                    @Html.Label("Associated Movies", htmlAttributes: new { @class = "control-label" })
+                    <select name="selectedMovies" multiple class="form-control">
+                        @foreach (var movie in ViewBag.Movies)
+                        {
+                            <option value="@movie.MovieId">@movie.Title</option>
+                        }
+                    </select>
+                </div>
+                <div class="form-group">
+                    <input type="submit" value="Create" class="btn btn-primary" />
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+<div class="mt-3">
+    <a href="/Location/Index" class="btn btn-secondary">Back to List</a>
+</div>

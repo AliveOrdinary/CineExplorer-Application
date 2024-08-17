@@ -1,0 +1,48 @@
+﻿@model CineExplorer.Models.Movie
+@{
+    ViewBag.Title = "Delete Movie";
+}
+<h2>Delete Movie</h2>
+<h3>Are you sure you want to delete this?</h3>
+<div class="row">
+    <div class="col-md-6">
+        <h4>Movie</h4>
+        <hr />
+        <dl class="row">
+            <dt class="col-sm-4">Name</dt>
+            <dd class="col-sm-8">@Model.Name</dd>
+
+            <dt class="col-sm-4">Release Year</dt>
+            <dd class="col-sm-8">@Model.ReleaseYear</dd>
+
+            <dt class="col-sm-4">Description</dt>
+            <dd class="col-sm-8">@Model.Description</dd>
+        </dl>
+
+        <h4>Associated Locations</h4>
+        @if (Model.Locations != null && Model.Locations.Any())
+        {
+            <ul>
+                @foreach (var location in Model.Locations)
+                {
+                    <li>@location.Name, @location.City, @location.Country</li>
+                }
+            </ul>
+        }
+        else
+        {
+            <p>No locations associated with this movie.</p>
+        }
+    </div>
+    <div class="col-md-6">
+        @if (!string.IsNullOrEmpty(Model.ImageURL))
+        {
+            <img src="@Model.ImageURL" alt="@Model.Name" class="img-fluid" />
+        }
+    </div>
+</div>
+
+<form action="/Movie/Delete/@Model.MovieId" method="POST">
+    <input type="submit" value="Delete" class="btn btn-danger" />
+    <a href="/Movie/Index" class="btn btn-secondary">Cancel</a>
+</form>

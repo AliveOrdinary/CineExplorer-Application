@@ -14,9 +14,20 @@ namespace CineExplorer.Models
         public string Name { get; set; }
         public int? ReleaseYear { get; set; }
         public string Description { get; set; }
-        public bool ImageURL { get; set; }
+        public string ImageURL { get; set; }
+
+        [Display(Name = "Upload Image")]
+        public HttpPostedFileBase ImageFile { get; set; }
 
         //A movie can have multiple locations
         public ICollection<Location> Locations { get; set; }
+
+        public Movie()
+        {
+            Locations = new HashSet<Location>();
+        }
+
     }
+
+
 }

@@ -1,0 +1,67 @@
+﻿@model CineExplorer.Models.Location
+
+@{
+    ViewBag.Title = "Location Details";
+}
+
+<h2>Location Details</h2>
+
+<div>
+    <h4>Location</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-3">Name</dt>
+        <dd class="col-sm-9">@Model.Name</dd>
+
+        <dt class="col-sm-3">City</dt>
+        <dd class="col-sm-9">@Model.City</dd>
+
+        <dt class="col-sm-3">Country</dt>
+        <dd class="col-sm-9">@Model.Country</dd>
+    </dl>
+
+    @if (!string.IsNullOrEmpty(Model.ImageURL))
+    {
+        <div class="mb-3">
+            <img src="@Model.ImageURL" alt="Location Image" class="img-fluid" style="max-width: 300px; margin-top: 10px;" />
+        </div>
+    }
+
+    <h4>Associated Movies</h4>
+    @if (Model.Movies != null && Model.Movies.Any())
+    {
+        <ul class="list-group">
+            @foreach (var movie in Model.Movies)
+            {
+                <li class="list-group-item">@movie.Name</li>
+            }
+        </ul>
+    }
+    else
+    {
+        <p>No movies associated with this location.</p>
+    }
+
+    <h4>Reviews</h4>
+    @if (ViewBag.Reviews != null && ViewBag.Reviews.Count > 0)
+    {
+        <ul class="list-group">
+            @foreach (var review in ViewBag.Reviews)
+            {
+                <li class="list-group-item">
+                    <strong>@review.Title</strong> - Rating: @review.Rating
+                    <p>@review.Content</p>
+                </li>
+            }
+        </ul>
+    }
+    else
+    {
+        <p>No reviews available for this location.</p>
+    }
+</div>
+
+<p>
+    <a href="@Url.Action("Edit", "Location", new { id = Model.LocationId })" class="btn btn-primary">Edit</a>
+    <a href="@Url.Action("Index", "Location")" class="btn btn-secondary">Back to List</a>
+</p>
