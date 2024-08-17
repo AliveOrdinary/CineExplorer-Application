@@ -13,9 +13,12 @@ namespace CineExplorer.Controllers
     {
         private ApplicationDbContext db = new ApplicationDbContext();
 
-        // ... existing methods ...
-
-        // POST: api/ReviewData/AddReviewForLocation/{locationId}
+        /// <summary>
+        /// Adds a new review for a specific location.
+        /// </summary>
+        /// <param name="locationId">The ID of the location being reviewed.</param>
+        /// <param name="review">The Review object containing the review details.</param>
+        /// <returns>An IHttpActionResult indicating the result of the operation.</returns>
         [HttpPost]
         [Route("AddReviewForLocation/{locationId}")]
         [Authorize]
@@ -42,7 +45,11 @@ namespace CineExplorer.Controllers
             return Ok(review);
         }
 
-        // GET: api/ReviewData/GetReviewsForLocation/{locationId}
+        /// <summary>
+        /// Retrieves all reviews for a specific location.
+        /// </summary>
+        /// <param name="locationId">The ID of the location to get reviews for.</param>
+        /// <returns>An IHttpActionResult containing a list of reviews for the specified location.</returns>
         [HttpGet]
         [Route("GetReviewsForLocation/{locationId}")]
         public IHttpActionResult GetReviewsForLocation(int locationId)

@@ -247,6 +247,10 @@ namespace CineExplorer.Controllers
             return Ok();
         }
 
+        /// <summary>
+        /// Lists all trips for the currently authenticated user.
+        /// </summary>
+        /// <returns>An IEnumerable of Trip objects representing the user's trips.</returns>
         [HttpGet]
         [Route("api/TripData/ListTripsForUser")]
         [Authorize]
@@ -257,11 +261,14 @@ namespace CineExplorer.Controllers
             return trips;
         }
 
+        /// <summary>
+        /// Checks if a trip with the given ID exists in the database.
+        /// </summary>
+        /// <param name="id">The ID of the trip to check.</param>
+        /// <returns>True if the trip exists, false otherwise.</returns>
         private bool TripExists(int id)
         {
             return db.Trip.Count(e => e.TripId == id) > 0;
         }
     }
-
-
 }

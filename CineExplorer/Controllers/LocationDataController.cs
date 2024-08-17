@@ -14,6 +14,10 @@ namespace CineExplorer.Controllers
     {
         private ApplicationDbContext db = new ApplicationDbContext();
 
+        /// <summary>
+        /// Retrieves a list of all locations.
+        /// </summary>
+        /// <returns>A list of locations.</returns>
         [HttpGet]
         [Route("api/LocationData/ListLocations")]
         public IEnumerable<Location> ListLocations()
@@ -22,6 +26,11 @@ namespace CineExplorer.Controllers
             return locations;
         }
 
+        /// <summary>
+        /// Retrieves a specific location by its ID, including its associated movies.
+        /// </summary>
+        /// <param name="id">The ID of the location to retrieve.</param>
+        /// <returns>The location with the specified ID</returns>
         // GET: api/LocationData/FindLocation/5
         [ResponseType(typeof(Location))]
         [HttpGet]
@@ -36,6 +45,12 @@ namespace CineExplorer.Controllers
             return Ok(location);
         }
 
+        /// <summary>
+        /// Adds a new location to the database, along with its associated movies.
+        /// Requires admin authorization.
+        /// </summary>
+        /// <param name="locationWithMovies">An object containing the location details and associated movie IDs.</param>
+        /// <returns>The created location with its associated movies, or a 400 Bad Request response if the model state is invalid.</returns>
         // POST: api/LocationData/AddLocation
         [Authorize(Users = "admin@testmail.com")]
         [HttpPost]
@@ -66,6 +81,13 @@ namespace CineExplorer.Controllers
             return Ok(location);
         }
 
+        /// <summary>
+        /// Updates an existing location in the database.
+        /// Requires admin authorization.
+        /// </summary>
+        /// <param name="id">The ID of the location to update.</param>
+        /// <param name="location">The updated location details.</param>
+        /// <returns>An HTTP status code indicating the result of the update operation.</returns>
         // POST: api/LocationData/UpdateLocation/5
         [Authorize(Users = "admin@testmail.com")]
         [ResponseType(typeof(void))]
@@ -100,6 +122,12 @@ namespace CineExplorer.Controllers
             return StatusCode(HttpStatusCode.NoContent);
         }
 
+        /// <summary>
+        /// Deletes a location from the database by its ID.
+        /// Requires admin authorization.
+        /// </summary>
+        /// <param name="id">The ID of the location to delete.</param>
+        /// <returns>The deleted location, or a 404 Not Found response if the location does not exist.</returns>
         // POST: api/LocationData/DeleteLocation/5
         [Authorize(Users = "admin@testmail.com")]
         [HttpPost]
